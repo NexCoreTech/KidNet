@@ -1,1 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>KidNet — Your space. Your friends. Your KidNet.</title>
+  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+  <header>
+    <h1>KidNet</h1>
+    <p class="tagline">Your space. Your friends. Your KidNet.</p>
+  </header>
 
+  <div class="container">
+    <button onclick="window.location='feed.html'">Go to Feed</button>
+    <button onclick="window.location='profile.html'">Your Profile</button>
+    <button onclick="window.location='post.html'">New Post</button>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 KidNet — Made by kids, for kids.</p>
+  </footer>
+
+  <style>
+    body {
+      background-color: #121212;
+      color: #f0f0f0;
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    header {
+      background: #1f1f1f;
+      padding: 2rem 1rem;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 3rem;
+      color: #00aced;
+    }
+
+    .tagline {
+      margin-top: 0.5rem;
+      font-size: 1.2rem;
+      color: #cccccc;
+    }
+
+    .container {
+      padding: 2rem 1rem;
+    }
+
+    button {
+      background: #2980b9;
+      border: none;
+      padding: 1rem 2rem;
+      margin: 1rem;
+      color: #fff;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #3498db;
+    }
+
+    footer {
+      background: #1f1f1f;
+      padding: 1rem;
+      position: fixed;
+      width: 100%;
+      bottom: 0;
+    }
+  </style>
+</body>
+</html>
