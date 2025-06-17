@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>New Post — KidNet</title>
+  <meta charset="UTF-8">
+  <style>
+    body { background: #1e1e2f; color: #eee; font-family: Arial, sans-serif; padding: 20px; }
+    form { max-width: 600px; margin: auto; background: #2b2b45; padding: 20px; border-radius: 10px; box-shadow: 0 0 12px #444; }
+    textarea { width: 100%; height: 120px; border-radius: 6px; border: none; padding: 10px; margin-bottom: 10px; }
+    button { padding: 10px 20px; background: #82c7ff; color: #1e1e2f; border: none; border-radius: 6px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>Create a New Post</h1>
+  <form action="/post" method="POST">
+    <textarea name="content" placeholder="What's up?" required></textarea>
+    <input type="hidden" name="author" value="stetup"> <!-- temp until we have sessions -->
+    <button type="submit">Post</button>
+  </form>
+</body>
+</html>
