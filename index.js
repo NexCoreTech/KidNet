@@ -1,36 +1,45 @@
 const express = require('express');
+const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Fake example user data (replace with real DB later)
+// Serve static files from public/
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Constant users — always include @stetup
 const users = {
   stetup: {
     username: 'stetup',
     bio: 'Your space. Your friends. Your KidNet.',
     domain: 'stetup.com',
     joined: 'March 2025',
-    status: 'Premium Member',
+    status: 'Owner',
     friends: ['jacob.stetup.com', 'josh.stetup.com', 'emma.stetup.com'],
     avatar: 'https://raw.githubusercontent.com/stetupdev/a/main/IMG_0164.jpg'
   }
 };
 
+// Serve index.html for root /
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Dynamic profile route like /@stetup
 app.get('/@:username', (req, res) => {
-  const username = req.params.username;
+  const username = req.params.username.toLowerCase();
   const user = users[username];
 
   if (!user) {
     return res.status(404).send('User not found');
   }
 
-  // Render a simple HTML page dynamically
   res.send(`
     <!DOCTYPE html>
     <html lang="en">
     <head>
       <title>@${user.username} — KidNet Profile</title>
       <style>
-        body { font-family: Arial,sans-serif; background:#1e1e2f; color:#eee; padding:20px; }
+        body { font-family: Arial, sans-serif; background:#1e1e2f; color:#eee; padding:20px; }
         .profile { max-width:600px; margin:auto; background:#2b2b45; border-radius:10px; padding:20px; box-shadow:0 0 12px #444; }
         h1 { color:#82c7ff; }
         .avatar { width:120px; height:120px; border-radius:50%; border:3px solid #82c7ff; margin-bottom:20px; }
@@ -60,6 +69,7 @@ app.get('/@:username', (req, res) => {
   `);
 });
 
+// Start server
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`KidNet backend running on port ${PORT}`);
 });
