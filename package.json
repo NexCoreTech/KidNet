@@ -1,5 +1,22 @@
 {
+  "name": "kidnet",
+  "version": "0.1.0-PREALPHA 1",
+  "description": "KidNet - A social media for kids by a kid",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "build": "echo \"No build step defined yet\" && exit 0"
+  },
+  "keywords": [
+    "kidnet",
+    "social-media",
+    "kids",
+    "nexcore"
+  ],
+  "author": "Jake (stetupdev)",
+  "license": "MIT",
   "dependencies": {
-    "pg": "^8.16.0"
+    "express": "^4.18.2",
+    "pg": "^8.11.0"
   }
 }
