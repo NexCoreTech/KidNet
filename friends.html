@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KidNet — My Friends</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #fff;
+      font-family: sans-serif;
+      padding: 30px;
+      max-width: 700px;
+      margin: auto;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.5em;
+      margin-bottom: 30px;
+    }
+
+    .friend {
+      background-color: #1e1e1e;
+      padding: 15px 20px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .friend-name {
+      font-size: 1.3em;
+    }
+
+    .status {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-left: 10px;
+    }
+
+    .online {
+      background-color: #4caf50;
+    }
+
+    .offline {
+      background-color: #888;
+    }
+
+    .info {
+      font-size: 0.9em;
+      color: #aaa;
+      margin-top: 5px;
+    }
+
+    .back-link {
+      display: block;
+      margin-top: 40px;
+      text-align: center;
+      font-size: 1.1em;
+      color: #999;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>My Friends</h1>
+
+  <div class="friend">
+    <div>
+      <span class="friend-name">@Josh.stetup.com</span>
+      <div class="info">Family friend (auto-added)</div>
+    </div>
+    <div class="status online"></div>
+  </div>
+
+  <div class="friend">
+    <div>
+      <span class="friend-name">@Jacob.stetup.com</span>
+      <div class="info">Family friend (auto-added)</div>
+    </div>
+    <div class="status offline"></div>
+  </div>
+
+  <div class="friend">
+    <div>
+      <span class="friend-name">@mom.stetup.com</span>
+      <div class="info">Family friend (auto-added)</div>
+    </div>
+    <div class="status online"></div>
+  </div>
+
+  <a class="back-link" href="profile.html">← Back to My Profile</a>
+
+</body>
+</html>

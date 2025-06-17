@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Your KidNet Profile</title>
+  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<header>
+  <h1>KidNet</h1>
+</header>
+
+<div class="container" id="profileContainer"></div>
+
+<footer>
+  <p>&copy; 2025 KidNet — Made by kids, for kids.</p>
+</footer>
+
+<script>
+  // Check login status
+  const username = localStorage.getItem("kidnet_username");
+  const premiumStatus = localStorage.getItem("kidnet_premium");
+  const nexcoreLinked = localStorage.getItem("kidnet_nexcore_link");
+
+  const container = document.getElementById("profileContainer");
+
+  if (!username) {
+    // No account? Send to create-account.html dynamically
+    window.location.href = "create-account.html";
+  } else {
+    // Build dynamic profile page
+    container.innerHTML = `
+      <h2>Welcome, @${username}</h2>
+      <p>Account Type: <strong>${premiumStatus === "true" ? "Premium 🏆" : "Standard"}</strong></p>
+      ${nexcoreLinked ? `<p>Linked NexCore Account: ${nexcoreLinked}</p>` : `<p>NexCore account: <em>Not linked</em></p>`}
+      <button onclick="logOut()">Log out</button>
+    `;
+  }
+
+  function logOut() {
+    localStorage.removeItem("kidnet_username");
+    localStorage.removeItem("kidnet_premium");
+    localStorage.removeItem("kidnet_nexcore_link");
+    window.location.href = "create-account.html";
+  }
+</script>
+</body>
+</html>

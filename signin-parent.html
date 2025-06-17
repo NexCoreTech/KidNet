@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Parent Sign In - KidNet</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #eee;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: #1f1f1f;
+      padding: 2rem;
+      border-radius: 12px;
+      width: 320px;
+      box-shadow: 0 0 15px rgba(0, 172, 237, 0.5);
+      text-align: center;
+    }
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      margin: 0.75rem 0;
+      border-radius: 6px;
+      border: none;
+      font-size: 1rem;
+    }
+    button {
+      background: #00aced;
+      color: #fff;
+      border: none;
+      padding: 0.75rem;
+      width: 100%;
+      border-radius: 6px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #0096d6;
+    }
+    .error {
+      color: #ff6666;
+      margin-top: 0.5rem;
+      min-height: 1.5em;
+    }
+    a {
+      color: #00aced;
+      text-decoration: none;
+      font-size: 0.9rem;
+      display: block;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Parent Sign In</h2>
+  <input type="text" id="domain" placeholder="Domain (e.g. stetup.com)" required autocomplete="off" />
+  <input type="password" id="passcode" placeholder="Domain Passcode" required autocomplete="current-password" />
+  <button onclick="signIn()">Sign In</button>
+  <div class="error" id="errorMsg"></div>
+  <a href="signup.html">Don't have a domain? Sign up here.</a>
+</div>
+
+<script>
+  // Sample saved parent domains with passcodes in localStorage
+  // Format: domains = { "stetup.com": { passcodes: ["abc123"], emails: ["mom@email.com", "dad@email.com"] } }
+
+  // For demo, preset one domain with passcode & emails:
+  if (!localStorage.getItem("parentDomains")) {
+    const demoDomains = {
+      "stetup.com": {
+        passcodes: ["secretpass"],
+        emails: ["mom@stetup.com", "dad@stetup.com"]
+      }
+    };
+    localStorage.setItem("parentDomains", JSON.stringify(demoDomains));
+  }
+
+  const errorMsg = document.getElementById("errorMsg");
+
+  function signIn() {
+    errorMsg.textContent = "";
+
+    const domain = document.getElementById("domain").value.trim().toLowerCase();
+    const passcode = document.getElementById("passcode").value;
+
+    if (!domain || !passcode) {
+      errorMsg.textContent = "Please fill in all fields.";
+      return;
+    }
+
+    const parentDomains = JSON.parse(localStorage.getItem("parentDomains") || "{}");
+
+    if (!parentDomains[domain]) {
+      errorMsg.textContent = "Domain not found.";
+      return;
+    }
+
+    if (!parentDomains[domain].passcodes.includes(passcode)) {
+      errorMsg.textContent = "Incorrect passcode.";
+      return;
+    }
+
+    // Save session info for parent dashboard
+    localStorage.setItem("parentSignedIn", JSON.stringify({ domain, passcode }));
+    window.location.href = "parent.html";
+  }
+</script>
+
+</body>
+</html>

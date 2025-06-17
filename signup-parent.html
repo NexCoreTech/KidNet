@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Parent Signup - KidNet</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #eee;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: #1f1f1f;
+      padding: 2rem;
+      border-radius: 12px;
+      width: 360px;
+      box-shadow: 0 0 15px rgba(0, 172, 237, 0.5);
+      text-align: center;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 0.75rem;
+      margin: 0.75rem 0;
+      border-radius: 6px;
+      border: none;
+      font-size: 1rem;
+      background: #292929;
+      color: #eee;
+      resize: vertical;
+    }
+    button {
+      background: #00aced;
+      color: #fff;
+      border: none;
+      padding: 0.75rem;
+      width: 100%;
+      border-radius: 6px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #0096d6;
+    }
+    .error {
+      color: #ff6666;
+      margin-top: 0.5rem;
+      min-height: 1.5em;
+    }
+    label {
+      display: block;
+      text-align: left;
+      margin-top: 0.5rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #ccc;
+    }
+    small {
+      color: #888;
+    }
+    a {
+      color: #00aced;
+      text-decoration: none;
+      font-size: 0.9rem;
+      display: block;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Parent Signup</h2>
+
+  <label for="domain">Choose Your Domain</label>
+  <input type="text" id="domain" placeholder="e.g. stetup.com" required autocomplete="off" />
+
+  <label for="passcode">Set a Domain Passcode</label>
+  <input type="password" id="passcode" placeholder="At least 8 characters" required />
+
+  <label for="emails">Admin Emails <span style="color:#f66;">(required)</span></label>
+  <textarea id="emails" placeholder="Enter one or more emails separated by commas"></textarea>
+  <small>Admins get invites & passcodes</small>
+
+  <button onclick="signUp()">Create Domain</button>
+  <div class="error" id="errorMsg"></div>
+
+  <a href="signin-parent.html">Already have a domain? Sign in here.</a>
+</div>
+
+<script>
+  const errorMsg = document.getElementById("errorMsg");
+
+  function validateDomain(domain) {
+    const domainPattern = /^[a-z0-9]+([.-][a-z0-9]+)*\.[a-z]{2,}$/i;
+    return domainPattern.test(domain);
+  }
+
+  function validateEmails(emails) {
+    if (!emails.trim()) return false; // Now required
+    const emailList = emails.split(",").map(e => e.trim());
+    const emailPattern = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+    return emailList.length >= 1 && emailList.every(email => emailPattern.test(email));
+  }
+
+  function signUp() {
+    errorMsg.textContent = "";
+
+    const domain = document.getElementById("domain").value.trim().toLowerCase();
+    const passcode = document.getElementById("passcode").value;
+    const emailsRaw = document.getElementById("emails").value.trim();
+    const emails = emailsRaw ? emailsRaw.split(",").map(e => e.trim().toLowerCase()) : [];
+
+    if (!domain || !passcode) {
+      errorMsg.textContent = "Domain and passcode are required.";
+      return;
+    }
+
+    if (!validateDomain(domain)) {
+      errorMsg.textContent = "Please enter a valid domain.";
+      return;
+    }
+
+    if (passcode.length < 8) {
+      errorMsg.textContent = "Passcode must be at least 8 characters.";
+      return;
+    }
+
+    if (!validateEmails(emailsRaw)) {
+      errorMsg.textContent = "Please enter at least one valid email separated by commas.";
+      return;
+    }
+
+    let parentDomains = JSON.parse(localStorage.getItem("parentDomains") || "{}");
+
+    if (parentDomains[domain]) {
+      errorMsg.textContent = "Domain already exists. Please choose another or sign in.";
+      return;
+    }
+
+    parentDomains[domain] = {
+      passcodes: [passcode],
+      emails: emails
+    };
+
+    localStorage.setItem("parentDomains", JSON.stringify(parentDomains));
+
+    alert(`Domain "${domain}" created successfully! You can now sign in.`);
+
+    window.location.href = "signin-parent.html";
+  }
+</script>
+
+</body>
+</html>

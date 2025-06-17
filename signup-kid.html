@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KidNet — Kid Signup</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #fff;
+      font-family: sans-serif;
+      text-align: center;
+      padding: 50px;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 30px;
+    }
+
+    form {
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 90%;
+      padding: 15px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      font-size: 1em;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 18px;
+      background-color: #1f6feb;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.2em;
+      margin-top: 20px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .btn:hover {
+      background-color: #539bf5;
+    }
+
+    a {
+      color: #999;
+      display: block;
+      margin-top: 20px;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Kid Signup</h1>
+
+  <form id="kidSignupForm">
+    <input type="text" id="username" placeholder="Choose a Username" required>
+    <input type="text" id="parentDomain" placeholder="Parent Domain (example: stetup.com)" required>
+    <input type="password" id="parentPasscode" placeholder="Parent Passcode" required>
+
+    <button type="submit" class="btn">Sign Up</button>
+  </form>
+
+  <a href="signup.html">← Back to Signup</a>
+
+  <script>
+    document.getElementById("kidSignupForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const username = document.getElementById("username").value;
+      const domain = document.getElementById("parentDomain").value;
+      const passcode = document.getElementById("parentPasscode").value;
+
+      if (!username || !domain || !passcode) {
+        alert("Please fill out everything!");
+        return;
+      }
+
+      // ✅ This is where you'd send the signup info to your backend endpoint (Node.js/Express or similar)
+      console.log("Signup request:", { username, domain, passcode });
+
+      // TEMP: Simulate signup success
+      alert("Signup sent! Your parent needs to approve it.");
+      window.location.href = "profile.html"; // redirect after signup, once backend is in place
+    });
+  </script>
+
+</body>
+</html>

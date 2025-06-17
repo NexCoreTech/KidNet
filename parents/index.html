@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Parent Dashboard - KidNet</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #eee;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+    }
+    header {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+    #signinSection, #dashboardSection {
+      background: #1f1f1f;
+      padding: 1.5rem;
+      border-radius: 12px;
+      width: 360px;
+      box-shadow: 0 0 20px #007acc88;
+      margin-bottom: 1rem;
+    }
+    label {
+      display: block;
+      margin-top: 0.75rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #ccc;
+    }
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      margin-top: 0.25rem;
+      border-radius: 6px;
+      border: none;
+      background: #292929;
+      color: #eee;
+      font-size: 1rem;
+    }
+    button {
+      margin-top: 1rem;
+      background: #00aced;
+      color: white;
+      border: none;
+      padding: 0.8rem;
+      width: 100%;
+      border-radius: 6px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #0096d6;
+    }
+    .error {
+      color: #ff6666;
+      min-height: 1.5em;
+      margin-top: 0.5rem;
+    }
+    h3 {
+      margin-top: 1rem;
+      border-bottom: 1px solid #333;
+      padding-bottom: 0.3rem;
+    }
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    li {
+      background: #292929;
+      padding: 0.5rem 1rem;
+      margin: 0.3rem 0;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: monospace;
+      font-size: 0.95rem;
+    }
+    .btn-remove {
+      background: #ff4444;
+      border: none;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      cursor: pointer;
+      color: white;
+      font-weight: 700;
+    }
+    .btn-remove:hover {
+      background: #cc0000;
+    }
+    .input-group {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .input-group input {
+      flex-grow: 1;
+    }
+    small {
+      color: #888;
+    }
+    #signoutBtn {
+      margin-top: 1rem;
+      background: #ff5555;
+    }
+  </style>
+</head>
+<body>
+
+<header>KidNet Parent Dashboard</header>
+
+<section id="signinSection">
+  <h2>Sign In</h2>
+  <label for="signinDomain">Domain</label>
+  <input type="text" id="signinDomain" placeholder="e.g. stetup.com" autocomplete="off" />
+
+  <label for="signinPasscode">Passcode</label>
+  <input type="password" id="signinPasscode" placeholder="Your domain passcode" />
+
+  <button id="signinBtn">Sign In</button>
+  <div class="error" id="signinError"></div>
+</section>
+
+<section id="dashboardSection" style="display:none;">
+  <h2 id="domainTitle"></h2>
+
+  <h3>Admin Emails</h3>
+  <ul id="emailsList"></ul>
+
+  <div class="input-group">
+    <input type="email" id="newEmail" placeholder="Add new admin email" />
+    <button id="addEmailBtn">Add Email</button>
+  </div>
+  <small>Adding an email will generate a new passcode for it.</small>
+
+  <h3>Passcodes</h3>
+  <ul id="passcodesList"></ul>
+
+  <div class="input-group">
+    <input type="text" id="newPasscode" placeholder="Add new passcode (min 8 chars)" />
+    <input type="email" id="linkedEmail" placeholder="Email to link passcode to" />
+    <button id="addPasscodeBtn">Add Passcode</button>
+  </div>
+
+  <button id="signoutBtn">Sign Out</button>
+</section>
+
+<script>
+  const signinSection = document.getElementById("signinSection");
+  const dashboardSection = document.getElementById("dashboardSection");
+  const signinError = document.getElementById("signinError");
+
+  const signinDomainInput = document.getElementById("signinDomain");
+  const signinPasscodeInput = document.getElementById("signinPasscode");
+  const signinBtn = document.getElementById("signinBtn");
+
+  const domainTitle = document.getElementById("domainTitle");
+  const emailsList = document.getElementById("emailsList");
+  const passcodesList = document.getElementById("passcodesList");
+  const newEmailInput = document.getElementById("newEmail");
+  const addEmailBtn = document.getElementById("addEmailBtn");
+  const newPasscodeInput = document.getElementById("newPasscode");
+  const linkedEmailInput = document.getElementById("linkedEmail");
+  const addPasscodeBtn = document.getElementById("addPasscodeBtn");
+  const signoutBtn = document.getElementById("signoutBtn");
+
+  let currentDomain = null;
+  let domainData = null;
+
+  // Simple masking for passcodes: show first 2 chars, then *****, then last 2 chars
+  function maskPasscode(pc) {
+    if (pc.length <= 4) return "*".repeat(pc.length);
+    return pc.slice(0, 2) + "*****" + pc.slice(-2);
+  }
+
+  function loadDomainData(domain) {
+    let allDomains = JSON.parse(localStorage.getItem("parentDomains") || "{}");
+    return allDomains[domain] || null;
+  }
+
+  function saveDomainData(domain, data) {
+    let allDomains = JSON.parse(localStorage.getItem("parentDomains") || "{}");
+    allDomains[domain] = data;
+    localStorage.setItem("parentDomains", JSON.stringify(allDomains));
+  }
+
+  function renderDashboard() {
+    domainTitle.textContent = `Domain: ${currentDomain}`;
+    emailsList.innerHTML = "";
+    passcodesList.innerHTML = "";
+
+    domainData.emails.forEach((email, idx) => {
+      const li = document.createElement("li");
+      li.textContent = email;
+      const btn = document.createElement("button");
+      btn.textContent = "Remove";
+      btn.className = "btn-remove";
+      btn.onclick = () => {
+        if (confirm(`Remove admin email "${email}"? This will also remove its passcode.`)) {
+          // Remove email and its passcode
+          domainData.emails.splice(idx, 1);
+          domainData.passcodes.splice(idx, 1);
+          saveDomainData(currentDomain, domainData);
+          renderDashboard();
+        }
+      };
+      li.appendChild(btn);
+      emailsList.appendChild(li);
+    });
+
+    domainData.passcodes.forEach((pc, idx) => {
+      const li = document.createElement("li");
+      li.textContent = maskPasscode(pc);
+      passcodesList.appendChild(li);
+    });
+  }
+
+  signinBtn.onclick = () => {
+    signinError.textContent = "";
+    const domain = signinDomainInput.value.trim().toLowerCase();
+    const passcode = signinPasscodeInput.value;
+
+    if (!domain || !passcode) {
+      signinError.textContent = "Please enter domain and passcode.";
+      return;
+    }
+
+    const data = loadDomainData(domain);
+    if (!data) {
+      signinError.textContent = "Domain not found.";
+      return;
+    }
+
+    if (!data.passcodes.includes(passcode)) {
+      signinError.textContent = "Incorrect passcode.";
+      return;
+    }
+
+    currentDomain = domain;
+    domainData = data;
+
+    // Hide sign-in, show dashboard
+    signinSection.style.display = "none";
+    dashboardSection.style.display = "block";
+
+    renderDashboard();
+
+    // Clear inputs
+    signinDomainInput.value = "";
+    signinPasscodeInput.value = "";
+  };
+
+  addEmailBtn.onclick = () => {
+    const email = newEmailInput.value.trim().toLowerCase();
+    if (!email) {
+      alert("Please enter an email.");
+      return;
+    }
+    // simple email validation
+    const emailPattern = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+    if (!emailPattern.test(email)) {
+      alert("Please enter a valid email.");
+      return;
+    }
+    if (domainData.emails.includes(email)) {
+      alert("Email already exists.");
+      return;
+    }
+
+    // Generate a random 10-char passcode for this email
+    const newPasscode = Array(10).fill(null).map(() => {
+      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      return chars.charAt(Math.floor(Math.random() * chars.length));
+    }).join("");
+
+    domainData.emails.push(email);
+    domainData.passcodes.push(newPasscode);
+
+    saveDomainData(currentDomain, domainData);
+    renderDashboard();
+    newEmailInput.value = "";
+
+    alert(`New admin email added.\nPasscode: ${newPasscode}`);
+  };
+
+  addPasscodeBtn.onclick = () => {
+    const newPasscode = newPasscodeInput.value;
+    const linkedEmail = linkedEmailInput.value.trim().toLowerCase();
+
+    if (!newPasscode || newPasscode.length < 8) {
+      alert("Passcode must be at least 8 characters.");
+      return;
+    }
+
+    const emailPattern = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+    if (!emailPattern.test(linkedEmail)) {
+      alert("Please enter a valid email to link the passcode to.");
+      return;
+    }
+
+    const emailIndex = domainData.emails.indexOf(linkedEmail);
+    if (emailIndex === -1) {
+      alert("Email not found among admins. Add the email first.");
+      return;
+    }
+
+    // Replace passcode for that email
+    domainData.passcodes[emailIndex] = newPasscode;
+    saveDomainData(currentDomain, domainData);
+    renderDashboard();
+
+    newPasscodeInput.value = "";
+    linkedEmailInput.value = "";
+
+    alert(`Passcode updated for ${linkedEmail}`);
+  };
+
+  signoutBtn.onclick = () => {
+    if (confirm("Sign out from the dashboard?")) {
+      currentDomain = null;
+      domainData = null;
+      signinSection.style.display = "block";
+      dashboardSection.style.display = "none";
+    }
+  };
+</script>
+
+</body>
+</html>
